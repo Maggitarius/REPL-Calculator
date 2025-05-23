@@ -8,9 +8,12 @@ public class Tokenizer {
     public List<String> tokenize(String expression, Double lastResult) {
         List<String> tokens = new ArrayList<>();
         StringBuilder builder = new StringBuilder();
+        boolean insertedLastResult = false;
 
-        if (startsWithOperator(expression) && lastResult != null) {
-            tokens.add(0, lastResult.toString());
+        expression = expression.stripLeading();
+
+        if (startsWithBinaryOperatorWithSpace(expression) && lastResult != null) {
+            tokens.add(lastResult.toString());
         }
 
         for (int i = 0; i < expression.length(); i++) {
@@ -20,22 +23,20 @@ public class Tokenizer {
                 continue;
             }
 
+            if (c == '-' && isUnary(expression, i)) {
+                tokens.add("neg");
+                continue;
+            }
+
             if (Character.isDigit(c) || c == '.') {
                 builder.append(c);
                 continue;
             }
 
+
             if (builder.length() > 0) {
                 tokens.add(builder.toString());
                 builder.setLength(0);
-            }
-
-            if (c == '-') {
-                char prev = lastNonSpace(expression, i);
-                if (i == 0 || prev == '(' || isOperator(prev)) {
-                    tokens.add("neg");
-                    continue;
-                }
             }
 
             if (isOperator(c) || c == '(' || c == ')') {
@@ -52,6 +53,13 @@ public class Tokenizer {
         return tokens;
     }
 
+    private boolean isUnary(String expression, int i) {
+        // Если перед '-' пробел или скобка или начало строки — это унарный минус
+        char prev = lastNonSpace(expression, i);
+        return i == 0 || prev == '(' || isOperator(prev);
+    }
+
+
     private boolean isOperator(char ch) {
         return "+-*/^".indexOf(ch) != -1;
     }
@@ -65,8 +73,11 @@ public class Tokenizer {
         return '\0';
     }
 
-    private boolean startsWithOperator(String expr) {
-        char first = expr.trim().charAt(0);
-        return "+-*/^".indexOf(first) != -1;
+    private boolean startsWithBinaryOperatorWithSpace(String expr) {
+        expr = expr.stripLeading();
+        return expr.length() >= 2 &&
+                "+-*/^".indexOf(expr.charAt(0)) != -1 &&
+                Character.isWhitespace(expr.charAt(1));
     }
+
 }

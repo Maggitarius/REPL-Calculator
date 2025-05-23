@@ -27,12 +27,12 @@ public class RpnConverter {
                 } else {
                     throw new RuntimeException("Mismatched parentheses");
                 }
+            } else if (token.equals("neg")) {
+                operators.push(token);
             } else {
                 Operators op1 = Operators.fromToken(token);
-
                 while (!operators.isEmpty() && Operators.fromToken(operators.peek()) != null) {
                     Operators op2 = Operators.fromToken(operators.peek());
-
                     if ((op1.associativity == LEFT && op1.precedence <= op2.precedence) ||
                             (op1.associativity == RIGHT && op1.precedence < op2.precedence)) {
                         output.add(operators.pop());
