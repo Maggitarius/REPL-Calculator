@@ -7,7 +7,7 @@ import java.util.Scanner;
 public class CalculatorApp {
 
     public static void main(String[] args) {
-        System.out.println("Type expressions to evaluate or one of the commands: calculator.history, clear, exit, reset");
+        System.out.println("Type expressions to evaluate or one of the commands: history, clear, exit, reset");
 
         InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
         Tokenizer tokenizer = new Tokenizer();
