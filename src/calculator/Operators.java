@@ -12,7 +12,12 @@ public enum Operators {
         if (b == 0) throw new ArithmeticException("Division by zero");
         return a / b;
     }),
-    POW("^", 3, Associativity.RIGHT, (a, b) -> Math.pow(a, b)),;
+    POW("^", 3, Associativity.RIGHT, (a, b) -> Math.pow(a, b)),
+    COS("cos", 3, Associativity.LEFT, (a,b) -> Math.cos(b)),
+    SIN("sin", 3, Associativity.LEFT, (a,b) -> Math.sin(b)),
+    TAN("tan", 3, Associativity.LEFT, (a, b) -> Math.tan(b)),
+    SQRT("sqrt", 3, Associativity.RIGHT, (a, b) -> Math.sqrt(b));
+
 
     public final String symbol;
     public final int precedence;

@@ -33,6 +33,17 @@ public class Tokenizer {
                 continue;
             }
 
+            String remaining = expression.substring(i);
+            String function = checkForFunction(remaining);
+            if (function != null) {
+                if (builder.length() > 0) {
+                    tokens.add(builder.toString());
+                    builder.setLength(0);
+                }
+                tokens.add(function);
+                i += function.length() - 1; // Move index forward
+                continue;
+            }
 
             if (builder.length() > 0) {
                 tokens.add(builder.toString());
@@ -54,7 +65,6 @@ public class Tokenizer {
     }
 
     private boolean isUnary(String expression, int i) {
-        // Если перед '-' пробел или скобка или начало строки — это унарный минус
         char prev = lastNonSpace(expression, i);
         return i == 0 || prev == '(' || isOperator(prev);
     }
@@ -80,4 +90,13 @@ public class Tokenizer {
                 Character.isWhitespace(expr.charAt(1));
     }
 
+    private String checkForFunction(String expr) {
+        String[] functions = {"cos", "sin", "tan", "sqrt"};
+        for (String func : functions) {
+            if (expr.startsWith(func) && !Character.isLetterOrDigit(expr.charAt(func.length()))) {
+                return func;
+            }
+        }
+        return null;
+    }
 }
