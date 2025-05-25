@@ -5,14 +5,14 @@ import java.util.function.BiFunction;
 public enum Operators {
 
     NEG("neg", 4, Associativity.RIGHT, (a, b) -> -b),
-    SUM("+", 1, Associativity.LEFT, (a, b) -> a + b),
+    SUM("+", 1, Associativity.LEFT, Double::sum),
     SUB("-", 1, Associativity.LEFT, (a, b) -> a - b),
     MUL("*", 2, Associativity.LEFT, (a, b) -> a * b),
     DIV("/", 2, Associativity.LEFT, (a, b) -> {
         if (b == 0) throw new ArithmeticException("Division by zero");
         return a / b;
     }),
-    POW("^", 3, Associativity.RIGHT, (a, b) -> Math.pow(a, b)),
+    POW("^", 3, Associativity.RIGHT, Math::pow),
     COS("cos", 3, Associativity.LEFT, (a,b) -> Math.cos(b)),
     SIN("sin", 3, Associativity.LEFT, (a,b) -> Math.sin(b)),
     TAN("tan", 3, Associativity.LEFT, (a, b) -> Math.tan(b)),

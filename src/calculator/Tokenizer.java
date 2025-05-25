@@ -59,7 +59,7 @@ public class Tokenizer {
             }
 
             // Закрытие накопленного числа
-            if (builder.length() > 0) {
+            if (!builder.isEmpty()) {
                 tokens.add(builder.toString());
                 builder.setLength(0);
             }
@@ -72,7 +72,7 @@ public class Tokenizer {
             }
         }
 
-        if (builder.length() > 0) {
+        if (!builder.isEmpty()) {
             tokens.add(builder.toString());
         }
 

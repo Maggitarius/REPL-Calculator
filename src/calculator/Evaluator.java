@@ -19,7 +19,7 @@ public class Evaluator {
             } else {
                 Operators op = Operators.fromToken(token);
                 if (op != null) {
-                    if (isUnaryOperator(op) && stack.size() >= 1) {
+                    if (isUnaryOperator(op) && !stack.isEmpty()) {
                         double b = stack.pop();
                         stack.push(op.apply(0, b));
                     }

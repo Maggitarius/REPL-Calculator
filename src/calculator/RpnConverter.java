@@ -40,11 +40,12 @@ public class RpnConverter {
                 while (!operators.isEmpty() && Operators.fromToken(operators.peek()) != null) {
                     Operators op2 = Operators.fromToken(operators.peek());
 
-                    if ((op1.associativity == LEFT && op1.precedence <= op2.precedence) ||
-                            (op1.associativity == RIGHT && op1.precedence < op2.precedence)) {
-                        output.add(operators.pop());
-                    } else {
-                        break;
+                    if (op2 != null) {
+                        assert op1 != null;
+                        if ((op1.associativity == LEFT && op1.precedence <= op2.precedence) ||
+                                (op1.associativity == RIGHT && op1.precedence < op2.precedence)) {
+                            output.add(operators.pop());
+                        }
                     }
                 }
                 operators.push(token);
