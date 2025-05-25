@@ -19,16 +19,17 @@ public class Evaluator {
             } else {
                 Operators op = Operators.fromToken(token);
                 if (op != null) {
-                    if (stack.size() < 2) {
-                        throw new IllegalArgumentException(
-                                "Operator '" + token + "' requires two operands, but only " + stack.size() + " found"
-                        );
+                    if (isUnaryOperator(op) && stack.size() >= 1) {
+                        double b = stack.pop();
+                        stack.push(op.apply(0, b));
                     }
-                    double b = stack.pop();
-                    double a = stack.pop();
-                    stack.push(op.apply(a, b));
+                    else if (stack.size() >= 2) {
+                        double b = stack.pop();
+                        double a = stack.pop();
+                        stack.push(op.apply(a, b));
+                    }
                 } else {
-                    throw new IllegalArgumentException("Unknown operator: " + token);
+                    throw new IllegalArgumentException("Operator '" + token + "' has wrong number of operands");
                 }
             }
         }
@@ -47,5 +48,10 @@ public class Evaluator {
         } catch (NumberFormatException e) {
             return false;
         }
+    }
+
+    private boolean isUnaryOperator(Operators op) {
+        return op == Operators.NEG || op == Operators.COS ||
+                op == Operators.SIN || op == Operators.TAN || op == Operators.SQRT;
     }
 }

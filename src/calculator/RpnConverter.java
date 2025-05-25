@@ -31,8 +31,15 @@ public class RpnConverter {
                 operators.push(token);
             } else {
                 Operators op1 = Operators.fromToken(token);
+
+                if (isUnaryFunction(op1)) {
+                    operators.push(token);
+                    continue;
+                }
+
                 while (!operators.isEmpty() && Operators.fromToken(operators.peek()) != null) {
                     Operators op2 = Operators.fromToken(operators.peek());
+
                     if ((op1.associativity == LEFT && op1.precedence <= op2.precedence) ||
                             (op1.associativity == RIGHT && op1.precedence < op2.precedence)) {
                         output.add(operators.pop());
@@ -62,5 +69,9 @@ public class RpnConverter {
         } catch (NumberFormatException e) {
             return false;
         }
+    }
+
+    private boolean isUnaryFunction(Operators op) {
+        return op == Operators.COS || op == Operators.SIN || op == Operators.TAN || op == Operators.SQRT;
     }
 }

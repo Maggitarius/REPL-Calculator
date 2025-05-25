@@ -8,9 +8,14 @@ public class Tokenizer {
     public List<String> tokenize(String expression, Double lastResult) {
         List<String> tokens = new ArrayList<>();
         StringBuilder builder = new StringBuilder();
-        boolean insertedLastResult = false;
 
         expression = expression.stripLeading();
+
+        if (lastResult != null && expression.startsWith("- ")) {
+            tokens.add(lastResult.toString());
+            tokens.add("-");
+            expression = expression.substring(2).stripLeading();
+        }
 
         if (startsWithBinaryOperatorWithSpace(expression) && lastResult != null) {
             tokens.add(lastResult.toString());
@@ -19,37 +24,47 @@ public class Tokenizer {
         for (int i = 0; i < expression.length(); i++) {
             char c = expression.charAt(i);
 
+            // Проверка на пробел
             if (Character.isWhitespace(c)) {
                 continue;
             }
 
+            //Проверка на функцию
+            String remaining = expression.substring(i);
+            String function = checkForFunction(remaining);
+            if (function != null) {
+                tokens.add(function);
+
+                boolean hasParen = remaining.length() > function.length() &&
+                        remaining.charAt(function.length()) == '(';
+
+                if (!hasParen && lastResult != null) {
+                    tokens.add(lastResult.toString());
+                }
+
+                i += function.length() - 1;
+                continue;
+            }
+
+            // Проверка на унарный минус
             if (c == '-' && isUnary(expression, i)) {
                 tokens.add("neg");
                 continue;
             }
 
+            // Проверка на число
             if (Character.isDigit(c) || c == '.') {
                 builder.append(c);
                 continue;
             }
 
-            String remaining = expression.substring(i);
-            String function = checkForFunction(remaining);
-            if (function != null) {
-                if (builder.length() > 0) {
-                    tokens.add(builder.toString());
-                    builder.setLength(0);
-                }
-                tokens.add(function);
-                i += function.length() - 1; // Move index forward
-                continue;
-            }
-
+            // Закрытие накопленного числа
             if (builder.length() > 0) {
                 tokens.add(builder.toString());
                 builder.setLength(0);
             }
 
+            // Проверка на скобки и операторы
             if (isOperator(c) || c == '(' || c == ')') {
                 tokens.add(String.valueOf(c));
             } else {
@@ -93,10 +108,13 @@ public class Tokenizer {
     private String checkForFunction(String expr) {
         String[] functions = {"cos", "sin", "tan", "sqrt"};
         for (String func : functions) {
-            if (expr.startsWith(func) && !Character.isLetterOrDigit(expr.charAt(func.length()))) {
-                return func;
+            if (expr.startsWith(func)) {
+                if (expr.length() == func.length() || !Character.isLetterOrDigit(expr.charAt(func.length()))) {
+                    return func;
+                }
             }
         }
         return null;
     }
+
 }
